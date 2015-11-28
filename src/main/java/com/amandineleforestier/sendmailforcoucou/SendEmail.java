@@ -3,9 +3,14 @@ package com.amandineleforestier.sendmailforcoucou;
 import java.util.*;
 import javax.mail.*;
 import javax.mail.internet.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+//http://www.tutorialspoint.com/java/java_sending_email.htm
+//http://stackoverflow.com/questions/3649014/send-email-using-java
 
 public class SendEmail {
-
+protected static final Logger logger = LoggerFactory.getLogger(SendEmail.class);
     public static void main(String[] args) {
         // Recipient's email ID needs to be mentioned.
         String to = "janitha@amandineleforestier.fr";
@@ -54,10 +59,11 @@ public class SendEmail {
             message.setSubject("This is the Subject Line!");
 
             // Now set the actual message
-            message.setText("This is actual message");
+            message.setContent("<h1>This is actual message</h1>", "text/html" );
 
             // Send message
-            Transport.send(message);
+//            Transport.send(message);
+            logger.warn("Sent message successfully....");
             System.out.println("Sent message successfully....");
         } catch (MessagingException mex) {
             mex.printStackTrace();
