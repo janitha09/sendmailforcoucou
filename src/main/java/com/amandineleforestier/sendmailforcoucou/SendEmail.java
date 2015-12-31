@@ -1,6 +1,9 @@
 package com.amandineleforestier.sendmailforcoucou;
 
+import java.io.File;
 import java.util.*;
+import javax.activation.DataHandler;
+import javax.activation.FileDataSource;
 import javax.mail.*;
 import javax.mail.internet.*;
 import org.slf4j.Logger;
@@ -8,12 +11,13 @@ import org.slf4j.LoggerFactory;
 
 //http://www.tutorialspoint.com/java/java_sending_email.htm
 //http://stackoverflow.com/questions/3649014/send-email-using-java
-
 public class SendEmail {
-protected static final Logger logger = LoggerFactory.getLogger(SendEmail.class);
-    public static void main(String[] args) {
+
+    protected static final Logger logger = LoggerFactory.getLogger(SendEmail.class);
+
+    public boolean SendAnEmail(String recipient, String subject, String messagebody) {
         // Recipient's email ID needs to be mentioned.
-        String to = "janitha@amandineleforestier.fr";
+        String to = recipient;
 
         // Sender's email ID needs to be mentioned
         String from = "janitha@amandineleforestier.fr";
@@ -42,7 +46,7 @@ protected static final Logger logger = LoggerFactory.getLogger(SendEmail.class);
 
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication("janitha@amandineleforestier.fr", "xxxxxx");
+                return new PasswordAuthentication("janitha@amandineleforestier.fr", "coucou&frog");
             }
         });
         try {
@@ -56,17 +60,75 @@ protected static final Logger logger = LoggerFactory.getLogger(SendEmail.class);
             message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
 
             // Set Subject: header field
-            message.setSubject("This is the Subject Line!");
+            message.setSubject(subject);
+//http://stackoverflow.com/questions/8973026/java-mail-attachments-inline-images
+//                    // Handle attachment 1
+//        MimeBodyPart messageBodyPart1 = new MimeBodyPart();
+//        messageBodyPart1.attachFile("c:/Temp/a.txt");
+//
+//        // Handle attachment 2
+//        MimeBodyPart messageBodyPart2 = new MimeBodyPart();
+//        messageBodyPart2.attachFile("c:/Temp/b.txt");
 
+            //inline image
+            FileDataSource fileDs = new FileDataSource("C:\\Users\\janitha\\OneDrive\\Pictures\\AW2015\\Adana.jpg");
+            MimeBodyPart imageBodypart = new MimeBodyPart();
+            imageBodypart.setDataHandler(new DataHandler(fileDs));
+            imageBodypart.setHeader("Content-ID", "<myimg>");
+            imageBodypart.setDisposition(MimeBodyPart.INLINE);
+
+            MimeMultipart multipart = new MimeMultipart("related"); //mixed
+
+            // Handle text
+            String body = "<html><body>Elotte<img src=\"cid:myimg\" width=\"400\" height=\"600\" alt=\"myimg\" />Utana</body></html>";
+
+            MimeBodyPart textPart = new MimeBodyPart();
+            textPart.setHeader("Content-Type", "text/plain; charset=\"utf-8\"");
+            textPart.setContent(body, "text/html; charset=utf-8");
+
+            multipart.addBodyPart(textPart);
+            multipart.addBodyPart(imageBodypart);
+//            multipart.addBodyPart(messageBodyPart1);
+//            multipart.addBodyPart(messageBodyPart2);
+
+            message.setContent(multipart);
             // Now set the actual message
-            message.setContent("<h1>This is actual message</h1>", "text/html" );
+            //message.setContent(messagebody, "text/html");
 
             // Send message
-//            Transport.send(message);
-            logger.warn("Sent message successfully....");
-            System.out.println("Sent message successfully....");
+            Transport.send(message);
+            logger.info("Sent message successfully....");
+
         } catch (MessagingException mex) {
-            mex.printStackTrace();
+            logger.error("Could not send message", mex.getMessage());
+            return false;
         }
+        return true;
+
     }
+
+//    public boolean sendAnEmailUsingSpring() {
+//        JavaMailSenderImpl sender = new JavaMailSenderImpl();
+//        sender.setHost("mail.host.com");
+//
+//        MimeMessage message = sender.createMimeMesage();
+//
+//// use the true flag to indicate you need a multipart message
+//        MimeMessageHelper helper = new MimeMessageHelper(message, true);
+//        helper.setTo("test@host.com");
+//
+//// use the true flag to indicate the text included is HTML
+//        helper.setText(
+//                "<html><body><img src='cid:identifier1234'></body></html>"
+//        true);
+//
+//// let's include the infamous windows Sample file (this time copied to c:/)
+//FileSystemResource res = new FileSystemResource(new File("c:/Sample.jpg"));
+//        helper.addInline("identifier1234", res);
+//
+//// if you would need to include the file as an attachment, use
+//// addAttachment() methods on the MimeMessageHelper
+//        sender.send(message);
+//    }
+
 }
