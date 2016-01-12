@@ -71,17 +71,7 @@ public class SendEmailForCoucouTest {
     public void sendAnEmail() {
 //        http://dyn.com/blog/tracking-email-opens-via-google-analytics/
         SendEmail se = new SendEmail();
-        se.SendAnEmail("janitha@amandineleforestier.fr", "Amandine Leforestier AW 2015", "<!DOCTYPE html>\n"
-                + "<html lang=\"en\" xmlns=\"http://www.w3.org/1999/xhtml\">\n"
-                + "<head>\n"
-                + "    <meta charset=\"utf-8\" />\n"
-                + "    <title></title>\n"
-                + "</head>\n"
-                + "<body>\n"
-                + "    <h3>HTML Message with image</h3>\n"
-                + "    <img src=\"http://www.google-analytics.com/collect?v=1&tid=UA-71457175-1&cid=2b884d0f825b&t=event&ec=email&ea=open&el=recipientid&cs=newsletter&cm=email&cn=CampaignName\"/>\n"
-                + "</body>\n"
-                + "</html>");
+        se.SendAnEmail("janitha@amandineleforestier.fr", "Amandine Leforestier AW 2015", "2016111");
     }
 
 //    @Test

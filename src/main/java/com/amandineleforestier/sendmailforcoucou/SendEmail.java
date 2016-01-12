@@ -15,7 +15,7 @@ public class SendEmail {
 
     protected static final Logger logger = LoggerFactory.getLogger(SendEmail.class);
 
-    public boolean SendAnEmail(String recipient, String subject, String messagebody) {
+    public boolean SendAnEmail(String recipient, String subject, String recipientid) {
         // Recipient's email ID needs to be mentioned.
         String to = recipient;
 
@@ -77,10 +77,19 @@ public class SendEmail {
             imageBodypart.setHeader("Content-ID", "<myimg>");
             imageBodypart.setDisposition(MimeBodyPart.INLINE);
 
+            FileDataSource signatureFileDs = new FileDataSource("C:\\Users\\janitha\\OneDrive\\Pictures\\SignatureLogo.png");
+            MimeBodyPart signatureBodypart = new MimeBodyPart();
+            signatureBodypart.setDataHandler(new DataHandler(signatureFileDs));
+            signatureBodypart.setHeader("Content-ID", "<signature>");
+            signatureBodypart.setDisposition(MimeBodyPart.INLINE);
+
             MimeMultipart multipart = new MimeMultipart("related"); //mixed
 
             // Handle text
-            String body = "<html><body>Elotte<img src=\"cid:myimg\" width=\"400\" height=\"600\" alt=\"myimg\" />Utana</body></html>";
+            String body = "<html><body>Elotte<img src=\"cid:myimg\" width=\"400\" height=\"600\" alt=\"myimg\" />Utana"
+                    + "<img src=\"http://www.google-analytics.com/collect?v=1&tid=UA-71457175-1&cid=2b884d0f825b&t=event&ec=email&ea=open&el="+recipientid+"&cs=newsletter&cm=email&cn=CampaignName\"/>\n"
+                    + "<p><a href=\"http://www.amandineleforestier.fr\">www.amandineleforestier.fr</a></p>"
+                    + "<p><img src=\"cid:signature\" width=\"199\" height=\"63\" /></p></body></html>";
 
             MimeBodyPart textPart = new MimeBodyPart();
             textPart.setHeader("Content-Type", "text/plain; charset=\"utf-8\"");
@@ -88,6 +97,7 @@ public class SendEmail {
 
             multipart.addBodyPart(textPart);
             multipart.addBodyPart(imageBodypart);
+            multipart.addBodyPart(signatureBodypart);
 //            multipart.addBodyPart(messageBodyPart1);
 //            multipart.addBodyPart(messageBodyPart2);
 
@@ -130,5 +140,4 @@ public class SendEmail {
 //// addAttachment() methods on the MimeMessageHelper
 //        sender.send(message);
 //    }
-
 }
