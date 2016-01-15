@@ -6,6 +6,7 @@
 package com.amandineleforestier.test;
 
 //import com.amandineleforestier.hibernate.HibernateUtil;
+import com.amandineleforestier.model.Emailaddresses;
 import com.amandineleforestier.model.Shopsthathaveemailaddresses;
 import com.amandineleforestier.model.Whattoemail;
 import com.amandineleforestier.sendmailforcoucou.SendEmail;
@@ -71,7 +72,7 @@ public class SendEmailForCoucouTest {
     public void sendAnEmail() {
 //        http://dyn.com/blog/tracking-email-opens-via-google-analytics/
         SendEmail se = new SendEmail();
-        se.SendAnEmail("janitha@amandineleforestier.fr", "Amandine Leforestier AW 2015", "2016111");
+        se.SendAnEmail("janitha.jayaweera@gmail.com", "Seek Capsule Rooms, You Choose!", "2016114");
     }
 
 //    @Test
@@ -150,5 +151,26 @@ public class SendEmailForCoucouTest {
                 setFirstResult(offset).
                 setMaxResults(100).
                 getResultList();
+    }
+    @Test
+    @Ignore
+    public void getListOfEmailsFromSpreadSheet() throws InterruptedException{
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("sendmailPU");
+        Emailaddresses[] bi = null;
+        try {
+            javax.persistence.Query q = emf.createEntityManager().createNamedQuery("Emailaddresses.fromSpreadSheet").setParameter("sid", 62267).setParameter("lid", 62437);
+            bi = (Emailaddresses[]) q.getResultList().toArray(new Emailaddresses[0]);
+        } finally {
+            emf.createEntityManager().close();
+        }
+        assertEquals("belen.cabido@molet.com", bi[169].getEmail());
+        String recipientid;
+        SendEmail se = new SendEmail();
+        for (int i = 10 ; i < bi.length ; i++){ //bi.length
+            recipientid = Integer.toString(62268 + i);
+            System.out.println(recipientid + " " + bi[i].getEmail() );
+            se.SendAnEmail(bi[i].getEmail(), "Seek Capsule Rooms, You Choose!", recipientid);
+            Thread.sleep(60000);
+        }
     }
 }

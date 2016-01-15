@@ -20,7 +20,7 @@ public class SendEmail {
         String to = recipient;
 
         // Sender's email ID needs to be mentioned
-        String from = "janitha@amandineleforestier.fr";
+        String from = "amandine@amandineleforestier.fr";
 
         // Assuming you are sending email from localhost
         String host = "smtp.amandineleforestier.fr";
@@ -71,10 +71,10 @@ public class SendEmail {
 //        messageBodyPart2.attachFile("c:/Temp/b.txt");
 
             //inline image
-            FileDataSource fileDs = new FileDataSource("C:\\Users\\janitha\\OneDrive\\Pictures\\AW2015\\Adana.jpg");
+            FileDataSource fileDs = new FileDataSource("C:\\Users\\janitha\\OneDrive\\Pictures\\invit salons SS 2016.jpg");
             MimeBodyPart imageBodypart = new MimeBodyPart();
             imageBodypart.setDataHandler(new DataHandler(fileDs));
-            imageBodypart.setHeader("Content-ID", "<myimg>");
+            imageBodypart.setHeader("Content-ID", "<AW2016Invite>");
             imageBodypart.setDisposition(MimeBodyPart.INLINE);
 
             FileDataSource signatureFileDs = new FileDataSource("C:\\Users\\janitha\\OneDrive\\Pictures\\SignatureLogo.png");
@@ -86,10 +86,10 @@ public class SendEmail {
             MimeMultipart multipart = new MimeMultipart("related"); //mixed
 
             // Handle text
-            String body = "<html><body>Elotte<img src=\"cid:myimg\" width=\"400\" height=\"600\" alt=\"myimg\" />Utana"
-                    + "<img src=\"http://www.google-analytics.com/collect?v=1&tid=UA-71457175-1&cid=2b884d0f825b&t=event&ec=email&ea=open&el="+recipientid+"&cs=newsletter&cm=email&cn=CampaignName\"/>\n"
+            String body = "<html><body><img src=\"cid:AW2016Invite\" height=\"600\" alt=\"AW2016 Show Invite\" />"
+                    + "<p><img src=\"http://www.google-analytics.com/collect?v=1&tid=UA-71457175-1&cid=2b884d0f825b&t=event&ec=email&ea=open&el="+recipientid+"&cs=newsletter&cm=email&cn=CampaignName\" alt=\"Thank you\"/></p>"
                     + "<p><a href=\"http://www.amandineleforestier.fr\">www.amandineleforestier.fr</a></p>"
-                    + "<p><img src=\"cid:signature\" width=\"199\" height=\"63\" /></p></body></html>";
+                    + "<p><img src=\"cid:signature\" width=\"199\" height=\"63\" alt=\"Signature logo\"/></p></body></html>";
 
             MimeBodyPart textPart = new MimeBodyPart();
             textPart.setHeader("Content-Type", "text/plain; charset=\"utf-8\"");
