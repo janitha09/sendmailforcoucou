@@ -7,6 +7,7 @@ package com.amandineleforestier.test;
 
 //import com.amandineleforestier.hibernate.HibernateUtil;
 import com.amandineleforestier.model.Emailaddresses;
+import com.amandineleforestier.model.Emailaddressesfromatmosphere;
 import com.amandineleforestier.model.Shopsthathaveemailaddresses;
 import com.amandineleforestier.model.Whattoemail;
 import com.amandineleforestier.sendmailforcoucou.SendEmail;
@@ -68,13 +69,20 @@ public class SendEmailForCoucouTest {
     }
 
     @Test
-//    @Ignore
+    @Ignore
     public void sendAnEmail() {
 //        http://dyn.com/blog/tracking-email-opens-via-google-analytics/
         SendEmail se = new SendEmail();
         se.SendAnEmail("janitha.jayaweera@gmail.com", "Seek Capsule Rooms, You Choose!", "2016114");
     }
 
+    @Test
+    @Ignore
+    public void sendAnEmailWithAMessage() {
+//        http://dyn.com/blog/tracking-email-opens-via-google-analytics/
+        SendEmail se = new SendEmail();
+        se.SendAnEmailWithMessage("janitha.jayaweera@gmail.com", "Seek Capsule Rooms, You Choose!", "A message that is a little bit long", "2016114");
+    }
 //    @Test
 //    @Ignore
 //    public void dataUsingHibernate() {
@@ -94,6 +102,7 @@ public class SendEmailForCoucouTest {
 ////        assertEquals(0,wtes.size());
 //
 //    }
+
     @Test
     public void replaceText() {
         String text = "Hi my name is <name></name>";
@@ -118,8 +127,8 @@ public class SendEmailForCoucouTest {
     }
 
     @Test
-//    @Ignore
-    public void preFetchShopUrlsFromTable() {
+    @Ignore
+    public void SendEmailWithMessage() throws InterruptedException {
         int offset = 0;
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("sendmailPU");
         EntityManager em = emf.createEntityManager();
@@ -129,14 +138,19 @@ public class SendEmailForCoucouTest {
 //        String text = "We are Amandine Leforestier. We are contacting you because you carry <brandname> in your shop <shopname>";
         while ((models = getIterableModels(em, offset, Shopsthathaveemailaddresses.class)).size() > 0) {
             em.getTransaction().begin();
-
+            SendEmail se = new SendEmail();
             for (Shopsthathaveemailaddresses model : models) {
+                if (i > 380 || i == 189) {
 //                java.util.logging.Logger.getLogger(SendEmailForCoucouTest.class.getName()).log(Level.INFO, "Url: {0} ", model.getEmail()+ model.getSrc1()+model.getShopname());
-                String text = "We are Amandine Leforestier. We are contacting you because you carry <brandname> in your shop <shopname>";
-                text = text.replace("<brandname>", model.getBrandname()).replace("<shopname>", model.getShopname());
-                System.out.println(i + " " + text);
-                System.out.println(i + " " + model.getBrandname() + " " + model.getId() + " " + model.getEmail() + " " + model.getSrc1() + " " + model.getShopname());
+                    String text = "We are contacting you because you carry <brandname> in your shop <shopname>. We are Amandine Leforestier a French minimalist brand that focuses on comfortable timeless apparel made from soft flowing fabric.";
+                    text = text.replace("<brandname>", model.getBrandname()).replace("<shopname>", model.getShopname());
+                    System.out.println(i + " " + text);
+
+                    se.SendAnEmailWithMessage(model.getEmail(), "Seek Capsule Rooms, You Choose!", text, Integer.toString(model.getId()));
+                    System.out.println(i + " " + model.getBrandname() + " " + model.getId() + " " + model.getEmail() + " " + model.getSrc1() + " " + model.getShopname());
+                    //Thread.sleep(10000);
 //                crawlForEmailAddresses(model.getShopurl());
+                }
                 i++;
             }
             em.flush();
@@ -152,9 +166,10 @@ public class SendEmailForCoucouTest {
                 setMaxResults(100).
                 getResultList();
     }
+
     @Test
     @Ignore
-    public void getListOfEmailsFromSpreadSheet() throws InterruptedException{
+    public void getListOfEmailsFromSpreadSheet() throws InterruptedException {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("sendmailPU");
         Emailaddresses[] bi = null;
         try {
@@ -166,11 +181,88 @@ public class SendEmailForCoucouTest {
         assertEquals("belen.cabido@molet.com", bi[169].getEmail());
         String recipientid;
         SendEmail se = new SendEmail();
-        for (int i = 10 ; i < bi.length ; i++){ //bi.length
+        for (int i = 10; i < bi.length; i++) { //bi.length
             recipientid = Integer.toString(62268 + i);
-            System.out.println(recipientid + " " + bi[i].getEmail() );
+            System.out.println(recipientid + " " + bi[i].getEmail());
             se.SendAnEmail(bi[i].getEmail(), "Seek Capsule Rooms, You Choose!", recipientid);
             Thread.sleep(60000);
+        }
+    }
+
+    private List<Emailaddressesfromatmosphere> getIterableModelsGeneric(EntityManager em, int offset, Class<Emailaddressesfromatmosphere> aClass) {
+//        assertEquals("Emailaddressesfromatmosphere",aClass.getClass().toString().split(".")[1]);
+        return em.createQuery("FROM Emailaddressesfromatmosphere as a", aClass).
+                setFirstResult(offset).
+                setMaxResults(100).
+                getResultList();
+    }
+
+    @Test
+    @Ignore
+    public void SendEmailWithMessageAtmosphere() throws InterruptedException {
+        int offset = 0;
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("sendmailPU");
+        EntityManager em = emf.createEntityManager();
+        List<Emailaddressesfromatmosphere> models = null;//where sh.placetypes like '%clothing%' and sh.shopurl is not null and sh.shopurl <> ''
+//        EmailScraper emailFinder = new EmailScraper();
+        int i = 0;
+//        String text = "We are Amandine Leforestier. We are contacting you because you carry <brandname> in your shop <shopname>";
+        while ((models = getIterableModelsGeneric(em, offset, Emailaddressesfromatmosphere.class)).size() > 0) {
+            em.getTransaction().begin();
+            SendEmail se = new SendEmail();
+            for (Emailaddressesfromatmosphere model : models) {
+                if (i > 1402) {
+//                java.util.logging.Logger.getLogger(SendEmailForCoucouTest.class.getName()).log(Level.INFO, "Url: {0} ", model.getEmail()+ model.getSrc1()+model.getShopname());
+                    //String text = "We are contacting you because you carry <brandname> in your shop <shopname>. We are Amandine Leforestier a French minimalist brand that focuses on comfortable timeless apparel made from soft flowing fabric.";
+                    //String text = text.replace("<brandname>", model.getBrandname()).replace("<shopname>", model.getShopname());
+                    //System.out.println(i + " " + text);
+
+                    se.SendAnEmail(model.getEmail(), "Seek Capsule Rooms, You Choose!", Integer.toString(model.getId()));
+//                    System.out.println(i + " " + " " + model.getId() + " " + model.getEmail());
+                    System.out.println(i + " " + " " + model.getId() + " " + model.getEmail());
+                    Thread.sleep(2000);
+//                crawlForEmailAddresses(model.getShopurl());
+                }
+                i++;
+            }
+            em.flush();
+            em.clear();
+            em.getTransaction().commit();
+            offset += models.size();
+        }
+    }
+        @Test
+    @Ignore
+    public void SendEmailWithMessagesToPeopleWhoReadOurEmails() throws InterruptedException {
+        int offset = 0;
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("sendmailPU");
+        EntityManager em = emf.createEntityManager();
+        List<Emailaddressesfromatmosphere> models = null;//where sh.placetypes like '%clothing%' and sh.shopurl is not null and sh.shopurl <> ''
+//        EmailScraper emailFinder = new EmailScraper();
+        int i = 0;
+//        String text = "We are Amandine Leforestier. We are contacting you because you carry <brandname> in your shop <shopname>";
+        while ((models = getIterableModelsGeneric(em, offset, Emailaddressesfromatmosphere.class)).size() > 0) {
+            em.getTransaction().begin();
+            SendEmail se = new SendEmail();
+            for (Emailaddressesfromatmosphere model : models) {
+                if (i > 1402) {
+//                java.util.logging.Logger.getLogger(SendEmailForCoucouTest.class.getName()).log(Level.INFO, "Url: {0} ", model.getEmail()+ model.getSrc1()+model.getShopname());
+                    //String text = "We are contacting you because you carry <brandname> in your shop <shopname>. We are Amandine Leforestier a French minimalist brand that focuses on comfortable timeless apparel made from soft flowing fabric.";
+                    //String text = text.replace("<brandname>", model.getBrandname()).replace("<shopname>", model.getShopname());
+                    //System.out.println(i + " " + text);
+
+                    se.SendAnEmail(model.getEmail(), "Seek Capsule Rooms, You Choose!", Integer.toString(model.getId()));
+//                    System.out.println(i + " " + " " + model.getId() + " " + model.getEmail());
+                    System.out.println(i + " " + " " + model.getId() + " " + model.getEmail());
+                    Thread.sleep(2000);
+//                crawlForEmailAddresses(model.getShopurl());
+                }
+                i++;
+            }
+            em.flush();
+            em.clear();
+            em.getTransaction().commit();
+            offset += models.size();
         }
     }
 }
